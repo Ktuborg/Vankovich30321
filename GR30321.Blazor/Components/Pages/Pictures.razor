@@ -1,0 +1,30 @@
+﻿@page "/pictures"
+@rendermode InteractiveServer
+
+<CascadingValue Value="PictureService">
+    <PicturesList PictureSelected="ShowDetails" />
+    <Pager />
+</CascadingValue>
+
+
+
+<PictureDetails Picture="SelectedPicture" />
+
+
+@code {
+
+    [Inject] IPictureService<Picture> PictureService { get; set; }
+
+    [Parameter]
+    public Picture SelectedPicture { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await PictureService.GetPictures();
+    }
+    void ShowDetails(int id)
+    {
+        SelectedPicture = PictureService.Pictures.First(d => d.Id == id);
+    }
+
+
+}

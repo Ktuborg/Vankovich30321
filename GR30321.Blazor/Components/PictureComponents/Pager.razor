@@ -1,0 +1,51 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+
+<div class="btn-group" role="group" aria-label="Pager">
+ <!-- Кнопка Previous -->
+    <button type="button" class="btn btn-outline-primary @(previousEnabled?"":"disabled")"
+            @onclick="@(e=>OnPageSelected(PictureService.CurrentPage-1))">
+    <span aria-hidden="true">&laquo;</span>
+    </button>
+
+    @for (int i = 1; i <= PictureService.TotalPages; i++)
+{
+    var temp = i;
+    <button type="button" class="btn btn-outline-primary
+        @(IsActive(temp)?"active":"")"
+        @onclick="@(e=>OnPageSelected(temp))">
+        @temp
+    </button>
+}
+ <!-- Кнопка Next -->
+    <button type="button" class="btn btn-outline-primary @(nextEnabled?"":"disabled")"
+            @onclick="@(e=>OnPageSelected(PictureService.CurrentPage+1))">
+    <span aria-hidden="true">&raquo;</span>
+    </button>
+</div>
+@code {
+        [CascadingParameter]
+    public IPictureService<Picture> PictureService { get; set; }
+protected override void OnInitialized()
+    {
+        PictureService.ListChanged += StateHasChanged;
+    }
+    // Кнопка Previous доступна?
+    bool previousEnabled { get => PictureService.CurrentPage != 1; }
+    // Кнопка Next доступна
+    bool nextEnabled
+    {
+        get => PictureService.CurrentPage != PictureService.TotalPages;
+    }
+    // Это текущая страница?
+    bool IsActive(int pageNo) => pageNo == PictureService.CurrentPage;
+    // Обработчик клика кнопки
+    async void OnPageSelected(int pageNo)
+    {
+        await PictureService.GetPictures(pageNo);
+    }
+    public void Dispose()
+    {
+        PictureService.ListChanged -= StateHasChanged;
+    }
+}

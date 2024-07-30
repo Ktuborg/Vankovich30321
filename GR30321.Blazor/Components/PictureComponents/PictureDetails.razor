@@ -1,0 +1,17 @@
+﻿@if (Picture!= null)
+    {
+    <div class="card mt-5" style="width: 18rem;">
+        <img src="@Picture.Image" class="card-img-top" alt="...">
+    <div class="card-body">
+            <h5 class="card-title">@Picture.Name</h5>
+            <p class="card-text">@Picture.Description</p>
+            <h4 class="badge bg-info">@Picture.Price млн $</h4>
+    </div>
+    </div>
+    }
+    @code {
+    [Parameter]
+    public Picture Picture { get; set; }
+    [Parameter]
+    public EventCallback<Picture> PictureChanged { get; set; }
+    }

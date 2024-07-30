@@ -1,0 +1,47 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+<h3>Описание</h3>
+
+
+@if (PictureService.Pictures != null && PictureService.Pictures.Count() != 0)
+{
+    <table class="table table-striped">
+        <thead>
+        <th>Название картин</th>
+        <th></th>
+            @foreach (var item in PictureService.Pictures)
+            {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <button class="btn btn-outline-dark"
+                            @onclick="@(()=>OnPictureSelected(item.Id))">
+                        Подробно
+                    </button>
+                </td>
+            </tr>
+            }
+        </thead>
+    </table>
+}
+
+
+
+@code {
+    [CascadingParameter]
+    public IPictureService<Picture> PictureService { get; set; }
+    [Parameter]
+    public EventCallback<int> PictureSelected { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        PictureService.ListChanged += StateHasChanged;
+    }
+    public async void OnPictureSelected(int id)
+    {
+        await PictureSelected.InvokeAsync(id);
+    }
+    public void Dispose()
+    {
+        PictureService.ListChanged -= StateHasChanged;
+    }
+}
